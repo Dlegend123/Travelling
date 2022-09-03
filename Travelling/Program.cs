@@ -38,8 +38,6 @@ namespace Travelling
                 {
                     if (j > 0) //Left
                         Stage[i][j].Neighbours.Add(Stage[i][j - 1]);
-                    else
-                        Stage[i][j].Neighbours.Add(Stage[i][columns - 1]);
 
                     if (((i + 1) < rows) & (j > 0)) //Up Left
                         Stage[i][j].Neighbours.Add(Stage[i + 1][j - 1]);
@@ -53,23 +51,23 @@ namespace Travelling
                     if ((j + 1) < columns) //Right
                         Stage[i][j].Neighbours.Add(Stage[i][j + 1]);
 
-                    if (((i - 1) > 0) & ((j + 1) < columns)) //Down Right
+                    if (((i - 1) >= 0) & ((j + 1) < columns)) //Down Right
                         Stage[i][j].Neighbours.Add(Stage[i - 1][j + 1]);
 
-                    if ((i - 1) > 0) //Down
+                    if ((i - 1) >= 0) //Down
                         Stage[i][j].Neighbours.Add(Stage[i - 1][j]);
 
-                    if (i == 0)
-                        Stage[i][j].Neighbours.Add(Stage[rows - 1][j]);
-                    
-                    if (((i - 1) > 0) & (j > 0)) //Down Left
+                    if (((i - 1) >= 0) & (j > 0)) //Down Left
                         Stage[i][j].Neighbours.Add(Stage[i - 1][j - 1]);
                 }
             }
 
+
             List<Tile> locations = new();
             Tile currentState = Stage[start.Item1][start.Item2];
-
+            int a = GC.GetGeneration(Stage);
+            Stage.Clear();
+            GC.Collect(a, GCCollectionMode.Forced);
             locations.Add(currentState);
 
             while (currentState.Distance != (0, 0))
@@ -93,8 +91,9 @@ namespace Travelling
 
             int step = 0;
 
-            Console.WriteLine("Goal: " + goal.ToString() + Environment.NewLine);
+            Console.Write("Goal: " + goal.ToString() + Environment.NewLine);
             locations.ForEach(x => Console.WriteLine("Stage " + (step++).ToString() + ": " + x.Path.ToString() + Environment.NewLine));
+
         }
 
     } // for

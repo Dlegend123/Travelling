@@ -38,6 +38,8 @@ namespace Travelling
                 {
                     if (j > 0) //Left
                         Stage[i][j].Neighbours.Add(Stage[i][j - 1]);
+                    else
+                        Stage[i][j].Neighbours.Add(Stage[i][columns - 1]);
 
                     if (((i + 1) < rows) & (j > 0)) //Up Left
                         Stage[i][j].Neighbours.Add(Stage[i + 1][j - 1]);
@@ -57,6 +59,9 @@ namespace Travelling
                     if ((i - 1) > 0) //Down
                         Stage[i][j].Neighbours.Add(Stage[i - 1][j]);
 
+                    if (i == 0)
+                        Stage[i][j].Neighbours.Add(Stage[rows - 1][j]);
+                    
                     if (((i - 1) > 0) & (j > 0)) //Down Left
                         Stage[i][j].Neighbours.Add(Stage[i - 1][j - 1]);
                 }
@@ -72,7 +77,7 @@ namespace Travelling
                 if (currentState.Neighbours.Any(x => x.Distance.Item1 >= 0 || x.Distance.Item2 >= 0))
                 {
                     if (currentState.Neighbours.Any(x => x.Distance.Item1 >= 0 && x.Distance.Item2 >= 0))
-                        currentState = currentState.Neighbours.Where(x => x.Distance.Item2 >= 0 && x.Distance.Item1 >= 0).OrderBy(v => v.Distance.Item1).ThenBy(c => c.Distance.Item2).First();
+                        currentState = currentState.Neighbours.Where(x => x.Distance.Item2 >= 0 && x.Distance.Item1 >= 0).OrderBy(v => v.Distance).First();
                     else
                     {
                         if (currentState.Neighbours.Any(x => x.Distance.Item1 >= 0))

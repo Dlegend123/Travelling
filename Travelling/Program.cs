@@ -69,8 +69,6 @@ namespace Travelling
 
             while (currentState.Distance != (0, 0))
             {
-                var list = currentState.Neighbours;
-                //currentState = currentState.Neighbours.MinBy(v => v.Distance);
                 if (currentState.Neighbours.Any(x => x.Distance.Item1 >= 0 || x.Distance.Item2 >= 0))
                 {
                     if (currentState.Neighbours.Any(x => x.Distance.Item1 >= 0 && x.Distance.Item2 >= 0))
@@ -84,7 +82,7 @@ namespace Travelling
                     }
                 }
                 else
-                    currentState=list.OrderByDescending(x => x.Distance).First();
+                    currentState = currentState.Neighbours.OrderByDescending(x => x.Distance).First();
                 locations.Add(currentState);
             }
 

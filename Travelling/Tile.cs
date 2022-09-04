@@ -16,7 +16,7 @@ namespace Travelling
         private List<Tile> neighbours;
         public Tile()
         {
-            neighbours = new List<Tile>(new Tile[8]);
+            neighbours = new List<Tile>();
             distance = new ValueTuple<int, int>();
         }
         public Tile(ValueTuple<int, int> distance, List<Tile> neighbours)
@@ -29,7 +29,7 @@ namespace Travelling
         {
             this.path = path;
             this.reward = reward;
-            neighbours = new List<Tile>(new Tile[8]);
+            neighbours = new List<Tile>();
             distance = new ValueTuple<int, int>();
         }
 

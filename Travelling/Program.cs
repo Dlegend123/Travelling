@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
+#pragma warning disable CS8604 // Possible null reference argument.
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+
 namespace Travelling
 {
     public class Program
@@ -16,7 +19,7 @@ namespace Travelling
 
             for (int i = 0; i < rows; i++)
             {
-                var list = new List<Tile>();
+                var list = new List<Tile>(columns);
                 for (int j = 0; j < columns; j++)
                 {
                     list.Add(new Tile()

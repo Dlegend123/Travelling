@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace Travelling
 {
-    [StructLayout(LayoutKind.Sequential)]
     public class Tile
     {
         private ValueTuple<int, int> path;
@@ -17,7 +16,7 @@ namespace Travelling
         private List<Tile> neighbours;
         public Tile()
         {
-            neighbours = new List<Tile>();
+            neighbours = new List<Tile>(new Tile[8]);
             distance = new ValueTuple<int, int>();
         }
         public Tile(ValueTuple<int, int> distance, List<Tile> neighbours)
@@ -30,7 +29,7 @@ namespace Travelling
         {
             this.path = path;
             this.reward = reward;
-            neighbours = new List<Tile>();
+            neighbours = new List<Tile>(new Tile[8]);
             distance = new ValueTuple<int, int>();
         }
 

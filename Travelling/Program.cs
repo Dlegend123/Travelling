@@ -36,32 +36,36 @@ namespace Travelling
             {
                 for (int j = 0; j < columns; j++)
                 {
-                    if (j > 0) //Left
+                    if (j > 0)
+                    {  //Left
                         Stage[i][j].Neighbours.Add(Stage[i][j - 1]);
 
-                    if (((i + 1) < rows) & (j > 0)) //Up Left
-                        Stage[i][j].Neighbours.Add(Stage[i + 1][j - 1]);
-
-                    if ((i + 1) < rows) //Up
+                        if ((i + 1) < rows) //Up Left
+                            Stage[i][j].Neighbours.Add(Stage[i + 1][j - 1]);
+                    }
+                    if ((i + 1) < rows)
+                    {  //Up
                         Stage[i][j].Neighbours.Add(Stage[i + 1][j]);
 
-                    if (((i + 1) < rows) & ((j + 1) < columns)) //Up Right
-                        Stage[i][j].Neighbours.Add(Stage[i + 1][j + 1]);
-
-                    if ((j + 1) < columns) //Right
+                        if ((j + 1) < columns) //Up Right
+                            Stage[i][j].Neighbours.Add(Stage[i + 1][j + 1]);
+                    }
+                    if ((j + 1) < columns)
+                    {  //Right
                         Stage[i][j].Neighbours.Add(Stage[i][j + 1]);
 
-                    if (((i - 1) >= 0) & ((j + 1) < columns)) //Down Right
-                        Stage[i][j].Neighbours.Add(Stage[i - 1][j + 1]);
-
-                    if ((i - 1) >= 0) //Down
+                        if ((i - 1) >= 0) //Down Right
+                            Stage[i][j].Neighbours.Add(Stage[i - 1][j + 1]);
+                    }
+                    if ((i - 1) >= 0)
+                    {  //Down
                         Stage[i][j].Neighbours.Add(Stage[i - 1][j]);
 
-                    if (((i - 1) >= 0) & (j > 0)) //Down Left
-                        Stage[i][j].Neighbours.Add(Stage[i - 1][j - 1]);
+                        if (j > 0) //Down Left
+                            Stage[i][j].Neighbours.Add(Stage[i - 1][j - 1]);
+                    }
                 }
             }
-
 
             List<Tile> locations = new();
             Tile currentState = Stage[start.Item1][start.Item2];
@@ -75,7 +79,7 @@ namespace Travelling
                 if (currentState.Neighbours.Any(x => x.Distance.Item1 >= 0 || x.Distance.Item2 >= 0))
                 {
                     if (currentState.Neighbours.Any(x => x.Distance.Item1 >= 0 && x.Distance.Item2 >= 0))
-                        currentState = currentState.Neighbours.Where(x => x.Distance.Item2 >= 0 && x.Distance.Item1 >= 0).OrderBy(v => v.Distance).First();
+                        currentState = currentState.Neighbours.Where(x => x.Distance.Item2 >= 0 && x.Distance.Item1 >= 0).MinBy(v => v.Distance);
                     else
                     {
                         if (currentState.Neighbours.Any(x => x.Distance.Item1 >= 0))
@@ -85,16 +89,17 @@ namespace Travelling
                     }
                 }
                 else
-                    currentState = currentState.Neighbours.OrderByDescending(x => x.Distance).First();
+                    currentState = currentState.Neighbours.MaxBy(x => x.Distance);
+
                 locations.Add(currentState);
             }
 
             int step = 0;
 
-            Console.Write("Goal: " + goal.ToString() + Environment.NewLine);
+            Console.Write("Goal: " + goal.ToString() + Environment.NewLine + Environment.NewLine);
             locations.ForEach(x => Console.WriteLine("Stage " + (step++).ToString() + ": " + x.Path.ToString() + Environment.NewLine));
 
         }
 
-    } // for
-} // Train
+    }
+}

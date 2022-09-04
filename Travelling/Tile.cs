@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace Travelling
 {
-    [StructLayout(LayoutKind.Sequential)]
     public class Tile
     {
         private ValueTuple<int, int> path;

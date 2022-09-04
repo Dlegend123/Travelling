@@ -82,7 +82,7 @@ namespace Travelling
                 if (currentState.Neighbours.Any(x => x.Distance.Item1 >= 0 || x.Distance.Item2 >= 0))
                 {
                     if (currentState.Neighbours.Any(x => x.Distance.Item1 >= 0 && x.Distance.Item2 >= 0))
-                        currentState = currentState.Neighbours.Where(x => x.Distance.Item2 >= 0 && x.Distance.Item1 >= 0).MinBy(v => v.Distance);
+                        currentState = currentState.Neighbours.MinBy(v => v.Distance);
                     else
                     {
                         if (currentState.Neighbours.Any(x => x.Distance.Item1 >= 0))
@@ -103,6 +103,5 @@ namespace Travelling
             locations.ForEach(x => Console.WriteLine("Stage " + (step++).ToString() + ": " + x.Path.ToString() + Environment.NewLine));
 
         }
-
     }
 }

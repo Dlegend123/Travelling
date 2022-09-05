@@ -10,32 +10,44 @@ namespace Travelling
 {
     public class Tile
     {
-        private ValueTuple<int, int> path;
-        private int reward;
-        private ValueTuple<int, int> distance;
-        private List<Tile> neighbours;
+        public Tile((int, int) path, int reward, (int, int) distance, List<Tile> neighbours, Story story)
+        {
+            this.Path = path;
+            this.Reward = reward;
+            this.Distance = distance;
+            this.Neighbours = neighbours;
+            this.Story = story;
+        }
         public Tile()
         {
-            neighbours = new List<Tile>();
-            distance = new ValueTuple<int, int>();
+            Neighbours = new List<Tile>();
+            Distance = new ValueTuple<int, int>();
+            Story = new();
         }
         public Tile(ValueTuple<int, int> distance, List<Tile> neighbours)
         {
             this.Distance = distance;
-            this.neighbours = neighbours;
+            this.Neighbours = neighbours;
+            Story = new();
         }
 
         public Tile(ValueTuple<int, int> path, int reward)
         {
-            this.path = path;
-            this.reward = reward;
-            neighbours = new List<Tile>();
-            distance = new ValueTuple<int, int>();
+            this.Path = path;
+            this.Reward = reward;
+            Neighbours = new List<Tile>();
+            Distance = new ValueTuple<int, int>();
+            Story = new();
         }
 
-        public ValueTuple<int, int> Path { get => path; set => path = value; }
-        public int Reward { get => reward; set => reward = value; }
-        public List<Tile> Neighbours { get => neighbours; set => neighbours = value; }
-        public ValueTuple<int, int> Distance { get => distance; set => distance = value; }
+        public (int, int) Path { get; set; }
+
+        public int Reward { get; set; }
+
+        public (int, int) Distance { get; set; }
+
+        public List<Tile> Neighbours { get; set; }
+
+        public Story Story { get; set; }
     }
 }

@@ -11,11 +11,11 @@ namespace Travelling
         static void Main()
         {
             Random random = new();
-            var rows = random.Next(1, 100);
-            var columns = random.Next(1, 100);
+            var rows = random.Next(2, 100);
+            var columns = random.Next(2, 100);
             var Stage = new List<List<Tile>>(rows);
-            var goal = (random.Next(1, rows) - 1, random.Next(1, columns) - 1);
-            var start = (random.Next(1, rows) - 1, random.Next(1, columns) - 1);
+            var goal = (random.Next(1, rows - 1), random.Next(1, columns - 1));
+            var start = (random.Next(1, rows - 1), random.Next(1, columns - 1));
 
             for (int i = 0; i < rows; i++)
             {
@@ -82,7 +82,7 @@ namespace Travelling
                 if (currentState.Neighbours.Any(x => x.Distance.Item1 >= 0 || x.Distance.Item2 >= 0))
                 {
                     if (currentState.Neighbours.Any(x => x.Distance.Item1 >= 0 && x.Distance.Item2 >= 0))
-                        currentState = currentState.Neighbours.MinBy(v => v.Distance);
+                        currentState = currentState.Neighbours.Where(x => x.Distance.Item2 >= 0 && x.Distance.Item1 >= 0).MinBy(v => v.Distance);
                     else
                     {
                         if (currentState.Neighbours.Any(x => x.Distance.Item1 >= 0))

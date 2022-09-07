@@ -48,4 +48,5 @@ public class Tile
 
     public Story Story { get; set; }
     public int Score { get; set; }
+    public bool IsPortal { get; set; }
 }

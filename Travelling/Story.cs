@@ -5,11 +5,11 @@ public class Story
     public Story(string title, List<string> paragraphs, string icon, List<KeyValuePair<int, string>> options,
         List<Tile> path)
     {
-        this.Title = title;
-        this.Paragraphs = paragraphs;
-        this.Icon = icon;
-        this.Options = options;
-        this.Path = path;
+        Title = title;
+        Paragraphs = paragraphs;
+        Icon = icon;
+        Options = options;
+        StageList = path;
     }
 
     public Story()
@@ -18,14 +18,24 @@ public class Story
         Paragraphs = new List<string>();
         Icon = "";
         Options = new List<KeyValuePair<int, string>>();
-        Path = new List<Tile>();
+        StageList = new List<Tile>();
     }
 
-    public void NextStage(ref Tile currentState)
+    public string Title { get; set; }
+
+    public List<string> Paragraphs { get; set; }
+
+    public string Icon { get; set; }
+
+    public List<KeyValuePair<int, string>> Options { get; set; }
+
+    public List<Tile> StageList { get; set; }
+
+    public Tile NextStage(int currentScore)
     {
         var choice = -1;
 
-        while (choice < 0 || choice > Path.Count - 1)
+        while (choice < 0 || choice > StageList.Count - 1)
         {
             foreach (var t in Paragraphs)
             {
@@ -48,16 +58,7 @@ public class Story
             Console.Clear();
         }
 
-        currentState = Path[choice];
+        StageList[choice].Reward += currentScore;
+        return StageList[choice];
     }
-
-    public string Title { get; set; }
-
-    public List<string> Paragraphs { get; set; }
-
-    public string Icon { get; set; }
-
-    public List<KeyValuePair<int, string>> Options { get; set; }
-
-    public List<Tile> Path { get; set; }
 }

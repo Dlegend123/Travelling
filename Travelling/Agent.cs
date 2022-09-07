@@ -1,23 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Travelling;
 
-namespace Travelling
+public class Agent
 {
-    public class Agent
+    public Agent(Tuple<int, int> state, int score)
     {
-        private Tuple<int, int> state;
-        private int score;
-
-        public Agent(Tuple<int, int> state, int score)
-        {
-            State = state;
-            Score = score;
-        }
-
-        public Tuple<int, int> State { get => state; set => state = value; }
-        public int Score { get => score; set => score = value; }
+        State = state;
+        Score = score;
     }
+
+    public Tuple<int, int> State { get; set; }
+
+    public int Score { get; set; }
 }

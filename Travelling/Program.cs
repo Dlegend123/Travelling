@@ -1,14 +1,11 @@
-﻿#pragma warning disable CS8604 // Possible null reference argument.
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-
-namespace Travelling;
+﻿namespace Travelling;
 
 public class Program
 {
     private static void Main()
     {
         Open();
-        StoryMode();
+        //StoryMode();
     }
 
     private static void Open()
@@ -19,6 +16,7 @@ public class Program
         var stage = new List<List<Tile>>(rows);
         var goal = (random.Next(1, rows - 1), random.Next(1, columns - 1));
         var start = (random.Next(1, rows - 1), random.Next(1, columns - 1));
+        var reward = random.Next(200, 1200);
 
         for (var i = 0; i < rows; i++)
         {
@@ -27,7 +25,7 @@ public class Program
                 list.Add(new Tile
                 {
                     Path = (i, j),
-                    Reward = random.Next(-1, 10),
+                    Reward = random.Next(-1, 100),
                     Distance = (goal.Item1 - i, goal.Item2 - j)
                 });
 
@@ -35,7 +33,7 @@ public class Program
         }
 
 
-        stage[goal.Item1][goal.Item2].Reward = 50;
+        stage[goal.Item1][goal.Item2].Reward = reward;
 
         for (var i = 0; i < rows; i++)
         for (var j = 0; j < columns; j++)
@@ -76,42 +74,28 @@ public class Program
         }
 
         List<Tile> locations = new();
-        var currentState = stage[start.Item1][start.Item2];
+        var currentStage = stage[start.Item1][start.Item2];
         var a = GC.GetGeneration(stage);
         stage.Clear();
         GC.Collect(a, GCCollectionMode.Forced);
-        locations.Add(currentState);
+        locations.Add(currentStage);
 
-        while (currentState.Distance != (0, 0)) currentState.Story.NextStage(ref currentState);
-
-        while (currentState.Distance != (0, 0))
+        while (currentStage.Distance != (0, 0))
         {
-            if (currentState.Neighbours.Any(x => x.Distance.Item1 >= 0 || x.Distance.Item2 >= 0))
-            {
-                if (currentState.Neighbours.Any(x => x.Distance.Item1 >= 0 && x.Distance.Item2 >= 0))
-                    currentState = currentState.Neighbours
-                        .Where(x => x.Distance.Item2 >= 0 && x.Distance.Item1 >= 0).MinBy(v => v.Distance);
-                else
-                    currentState = currentState.Neighbours.Any(x => x.Distance.Item1 >= 0)
-                        ? currentState.Neighbours.Where(x => x.Distance.Item2 < 0 && x.Distance.Item1 >= 0)
-                            .OrderBy(c => c.Distance.Item1).ThenByDescending(b => b.Distance.Item2).First()
-                        : currentState.Neighbours
-                            .Where(x => x.Distance.Item2 >= 0 && x.Distance.Item1 < 0)
-                            .OrderByDescending(c => c.Distance.Item1).ThenBy(b => b.Distance.Item2).First();
-            }
-            else
-            {
-                currentState = currentState.Neighbours.MaxBy(x => x.Distance);
-            }
-
-            locations.Add(currentState);
+            var score = currentStage.Score;
+            currentStage = currentStage.Neighbours.MinByDistance();
+            score += currentStage.Reward;
+            currentStage.Score = score;
+            locations.Add(currentStage);
         }
 
         var step = 0;
 
         Console.Write("Goal: " + goal + Environment.NewLine + Environment.NewLine);
-        locations.ForEach(x => Console.WriteLine("stage " + step++ + ": " + x.Path + Environment.NewLine));
+        locations.ForEach(x =>
+            Console.WriteLine("Stage " + step++ + ": " + x.Path + ", Score: " + x.Score + Environment.NewLine));
     }
+
 
     private static void StoryMode()
     {
@@ -177,11 +161,11 @@ public class Program
                 stage[i][j].Neighbours.Add(stage[i - 1][j - 1]);
         }
 
-        var currentState = stage[start.Item1][start.Item2];
+        var currentStage = stage[start.Item1][start.Item2];
         var a = GC.GetGeneration(stage);
         stage.Clear();
         GC.Collect(a, GCCollectionMode.Forced);
 
-        while (currentState.Distance != (0, 0)) currentState.Story.NextStage(ref currentState);
+        while (currentStage.Distance != (0, 0)) currentStage = currentStage.Story.NextStage(currentStage.Reward);
     }
 }

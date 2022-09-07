@@ -169,14 +169,12 @@ public class Program
                     stage[i][j].Neighbours.Add(stage[i - 1][j + 1]);
             }
 
-            if (i - 1 >= 0)
-            {
-                //Down
-                stage[i][j].Neighbours.Add(stage[i - 1][j]);
+            if (i - 1 < 0) continue;
+            //Down
+            stage[i][j].Neighbours.Add(stage[i - 1][j]);
 
-                if (j > 0) //Down Left
-                    stage[i][j].Neighbours.Add(stage[i - 1][j - 1]);
-            }
+            if (j > 0) //Down Left
+                stage[i][j].Neighbours.Add(stage[i - 1][j - 1]);
         }
 
         var currentState = stage[start.Item1][start.Item2];

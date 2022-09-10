@@ -20,13 +20,14 @@ public class Program
         for (var i = 0; i < rows; i++)
         {
             var list = new List<Tile>(columns);
+            var rDif = goal.Item1 - i >= 2 && goal.Item1 - i > i;
             for (var j = 0; j < columns; j++)
                 list.Add(new Tile
                 {
                     Path = (i, j),
                     Reward = random.Next(-1, 100),
                     Distance = (goal.Item1 - i, goal.Item2 - j),
-                    IsPortal = goal.Item1 - i >= 2 && goal.Item1 - i > i && goal.Item2 - j >= 2 && goal.Item2 - j > j &&
+                    IsPortal = rDif && goal.Item2 - j >= 2 && goal.Item2 - j > j &&
                                Convert.ToBoolean(random.Next(2))
                 });
 
@@ -39,7 +40,7 @@ public class Program
         {
             if (stage[i][j].IsPortal)
             {
-                stage[i][j].Reward += 200;
+                stage[i][j].Score = stage[i][j].Reward = 200;
                 var rLeft = random.Next(i, goal.Item1 - i);
                 var cLeft = random.Next(j, goal.Item2 - j);
 
@@ -49,7 +50,7 @@ public class Program
                     cLeft = random.Next(j, goal.Item2 - j);
                 }
 
-                stage[i][j].Neighbours.Add(stage[random.Next(i, goal.Item1 - i)][random.Next(j, goal.Item2 - j)]);
+                stage[i][j].Neighbours.Add(stage[rLeft][cLeft]);
             }
 
             if (j > 0)

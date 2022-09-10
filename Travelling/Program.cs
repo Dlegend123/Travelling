@@ -16,7 +16,6 @@ public class Program
         var stage = new List<List<Tile>>(rows);
         var goal = (random.Next(1, rows - 1), random.Next(1, columns - 1));
         var start = (random.Next(1, rows - 1), random.Next(1, columns - 1));
-        var reward = random.Next(200, 1200);
 
         for (var i = 0; i < rows; i++)
         {

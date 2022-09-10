@@ -37,14 +37,12 @@ public class Story
 
         while (choice < 0 || choice > StageList.Count - 1)
         {
-            foreach (var t in Paragraphs)
+            Paragraphs.ForEach(t =>
             {
                 Console.WriteLine(t);
                 Console.Read();
-            }
-
-            foreach (var t in Options)
-                Console.WriteLine(t.Key + " - " + t.Value);
+            });
+            Options.ForEach(t => Console.WriteLine(t.Key + " - " + t.Value));
 
             try
             {

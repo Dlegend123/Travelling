@@ -3,7 +3,7 @@
 public class Story
 {
     public Story(string title, List<string> paragraphs, string icon, List<KeyValuePair<int, string>> options,
-        List<Tile> path)
+        List<Tile?> path)
     {
         Title = title;
         Paragraphs = paragraphs;
@@ -18,7 +18,7 @@ public class Story
         Paragraphs = new List<string>();
         Icon = "";
         Options = new List<KeyValuePair<int, string>>();
-        StageList = new List<Tile>();
+        StageList = new List<Tile?>();
     }
 
     public string Title { get; set; }
@@ -29,9 +29,9 @@ public class Story
 
     public List<KeyValuePair<int, string>> Options { get; set; }
 
-    public List<Tile> StageList { get; set; }
+    public List<Tile?> StageList { get; set; }
 
-    public Tile NextStage(int currentScore)
+    public Tile? NextStage(int currentScore)
     {
         var choice = -1;
 

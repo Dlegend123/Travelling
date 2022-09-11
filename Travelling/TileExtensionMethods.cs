@@ -4,7 +4,7 @@ namespace Travelling
 {
     internal static class TileExtensionMethods
     {
-        internal static IEnumerable<Tile> SortTiles(this IReadOnlyCollection<Tile> tiles)
+        internal static List<Tile> SortTiles(this IReadOnlyCollection<Tile> tiles)
         {
             if (!tiles.Any(x => x.Distance.Item1 >= 0 || x.Distance.Item2 >= 0))
                 return tiles.OrderByDescending(x => x.Distance).ToList();
@@ -20,6 +20,22 @@ namespace Travelling
                         .OrderByDescending(c => c.Distance.Item1).ThenBy(b => b.Distance.Item2).ToList();
             }
 
+        }
+
+        internal static List<Tile> GetWalkableTiles(this Tile currentTile,Tile previous)
+        {
+            currentTile.Neighbours.SortTiles();
+            currentTile.Neighbours.RemoveAll(v => v.Path == previous?.Path);
+
+            var possibleTiles = currentTile.Neighbours;
+
+            possibleTiles.ForEach(t1 =>
+            {
+                t1.Parent = previous;
+                if(previous!=null)
+                t1.Cost = previous.Cost + 1;
+            });
+            return possibleTiles;
         }
 
         internal static Tile MinByDistance(this List<Tile> tiles)
@@ -39,7 +55,7 @@ namespace Travelling
             }
 
         }
-        
+
         internal static Tile MaxByDistance(this List<Tile> tiles)
         {
             if (!tiles.Any(x => x.Distance.Item1 >= 0 || x.Distance.Item2 >= 0))

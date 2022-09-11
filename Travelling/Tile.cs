@@ -1,4 +1,7 @@
-﻿namespace Travelling;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.VisualBasic.CompilerServices;
+
+namespace Travelling;
 
 public class Tile
 {
@@ -38,6 +41,11 @@ public class Tile
         Score = 0;
     }
 
+    internal Tile GetRandom()
+    {
+        return Neighbours[new Random().Next(Neighbours.Count)];
+    }
+
     public (int, int) Path { get; set; }
 
     public int Reward { get; set; }
@@ -49,4 +57,9 @@ public class Tile
     public Story Story { get; set; }
     public int Score { get; set; }
     public bool IsPortal { get; set; }
+    public Tile Parent { get; set; }
+    public double Cost { get; set; }
+
+    public double CostDistance => Cost + (1 * (Distance.Item1 + Distance.Item2) +
+                                          (Math.Sqrt(2) - 2 * 1) * Math.Min(Distance.Item1, Distance.Item2));
 }

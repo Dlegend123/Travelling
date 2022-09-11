@@ -1,14 +1,17 @@
-﻿namespace Travelling;
+﻿using System.Security.Cryptography.X509Certificates;
+using static System.Formats.Asn1.AsnWriter;
+
+namespace Travelling;
 
 public class Program
 {
     private static void Main()
     {
-        Open();
+        new Program().Open();
        // StoryMode();
     }
 
-    private static void Open()
+    private void Open()
     {
         Random random = new();
         var rows = random.Next(2, 100);
@@ -26,7 +29,7 @@ public class Program
                 {
                     Path = (i, j),
                     Reward = random.Next(-1, 100),
-                    Distance = (goal.Item1 - i, goal.Item2 - j),
+                    Distance = (Math.Abs(i - goal.Item1), Math.Abs(j - goal.Item2)),
                     IsPortal = rDif && goal.Item2 - j >= 2 && goal.Item2 - j > j &&
                                Convert.ToBoolean(random.Next(2))
                 });
@@ -88,28 +91,63 @@ public class Program
                 stage[i][j].Neighbours.Add(stage[i - 1][j - 1]);
         }
 
-        List<Tile> locations = new();
         var currentStage = stage[start.Item1][start.Item2];
         var a = GC.GetGeneration(stage);
         stage.Clear();
         GC.Collect(a, GCCollectionMode.Forced);
-        locations.Add(currentStage);
 
-        while (currentStage.Distance != (0, 0))
+        var score = currentStage.Reward;
+        var activeTiles = new List<Tile>{currentStage};
+
+        var visitedTiles = new List<Tile> { currentStage };
+
+        while (activeTiles.Any())
         {
-            var score = currentStage.Score;
-            currentStage = currentStage.Neighbours.MinByDistance();
-            score += currentStage.Reward;
-            currentStage.Score = score;
-            locations.Add(currentStage);
+            var checkTile = activeTiles.OrderBy(c => c.CostDistance).First();
+            score += checkTile.Reward;
+            checkTile.Score = score;
+
+            if (checkTile.Path == goal)
+            {
+                //We found the destination and we can be sure (Because the the OrderBy above)
+                //That it's the most low cost option. 
+                var tile = checkTile;
+                Console.WriteLine("Goal: " + goal + Environment.NewLine + Environment.NewLine + "Start: " + start);
+                Console.WriteLine("Retracing steps backwards...\n");
+
+                while (tile != null)
+                {
+                    Console.WriteLine("Path: " + tile.Path + ", Score: " + tile.Score + ", IsPortal: " +
+                                      tile.IsPortal +
+                                      Environment.NewLine);
+                    tile = tile.Parent;
+                }
+
+                break;
+            }
+
+            visitedTiles.Add(checkTile);
+
+            activeTiles.Remove(checkTile);
+
+            var walkableTiles = checkTile.GetWalkableTiles(visitedTiles[^2]);
+
+            foreach (var walkableTile in walkableTiles.Where(walkableTile =>
+                         visitedTiles.All(x => x.Path != walkableTile.Path)))
+                //It's already in the active list, but that's OK, maybe this new tile has a better value (e.g. We might zigzag earlier but this is now straighter). 
+                if (activeTiles.Any(x => x.Path == walkableTile.Path))
+                {
+                    var existingTile = activeTiles.First(x => x.Path == walkableTile.Path);
+                    if (!(existingTile.CostDistance > checkTile.CostDistance)) continue;
+                    activeTiles.Remove(existingTile);
+                    activeTiles.Add(walkableTile);
+                }
+                else
+                {
+                    //We've never seen this tile before so add it to the list. 
+                    activeTiles.Add(walkableTile);
+                }
         }
-
-        var step = 0;
-
-        Console.Write("Goal: " + goal + Environment.NewLine + Environment.NewLine);
-        locations.ForEach(x =>
-            Console.WriteLine("Stage " + step++ + ": " + x.Path + ", Score: " + x.Score + ", IsPortal: " + x.IsPortal +
-                              Environment.NewLine));
     }
 
 

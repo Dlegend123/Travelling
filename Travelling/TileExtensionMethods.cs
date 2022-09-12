@@ -22,19 +22,17 @@ namespace Travelling
 
         }
 
-        internal static List<Tile> GetWalkableTiles(this Tile currentTile,Tile previous)
+        internal static List<Tile> GetWalkableTiles(this Tile currentTile)
         {
-            currentTile.Neighbours.SortTiles();
-            currentTile.Neighbours.RemoveAll(v => v.Path == previous?.Path);
 
             var possibleTiles = currentTile.Neighbours;
 
             possibleTiles.ForEach(t1 =>
             {
-                t1.Parent = previous;
-                if(previous!=null)
-                t1.Cost = previous.Cost + 1;
+                t1.Parent = currentTile;
+                t1.Cost = currentTile.Cost + 1;
             });
+
             return possibleTiles;
         }
 

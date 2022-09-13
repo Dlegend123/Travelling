@@ -24,7 +24,6 @@ namespace Travelling
 
         internal static List<Tile> GetWalkableTiles(this Tile currentTile)
         {
-
             var possibleTiles = currentTile.Neighbours;
 
             possibleTiles.ForEach(t1 =>

@@ -103,20 +103,22 @@ public class Program
         stage.Clear();
         GC.Collect(a, GCCollectionMode.Forced);
 
-        if (!FindPath(new List<Tile> { currentStage }, goal))
+        if (!FindPath(new List<Tile> { currentStage }, new List<Tile> { currentStage }, goal))
             Console.WriteLine("No Path Found...\n");
     }
 
-    private static bool FindPath(ICollection<Tile> activeTiles, (int, int) goal)
+    private static bool FindPath(ICollection<Tile> activeTiles, List<Tile> visitedTiles, (int, int) goal)
     {
         var score = 0;
-        var visitedTiles = new List<Tile>();
 
         while (activeTiles.Any())
         {
             var checkTile = activeTiles.OrderBy(c => c.CostDistance).First();
             score += checkTile.Reward;
             checkTile.Score = score;
+
+            visitedTiles.Add(checkTile);
+            activeTiles.Remove(checkTile);
 
             if (checkTile.Path == goal)
             {
@@ -135,22 +137,17 @@ public class Program
 
                 return true;
             }
-
-            visitedTiles.Add(checkTile);
-            activeTiles.Remove(checkTile);
-            checkTile.Neighbours.Remove(visitedTiles.Count > 1 ? visitedTiles[^2] : visitedTiles[^1]);
+            checkTile.Neighbours.Remove(visitedTiles[^2]);
 
             var walkableTiles = checkTile.GetWalkableTiles();
 
-            foreach (var walkableTile in walkableTiles.Where(walkableTile =>
-                         visitedTiles.All(x => x.Path != walkableTile.Path)))
+            foreach (var walkableTile in walkableTiles.Where(walkableTile => !visitedTiles.Any(x => x.Path == walkableTile.Path)))
+            {
                 //It's already in the active list, but that's OK, maybe this new tile has a better value (e.g. We might zigzag earlier but this is now straighter). 
                 if (activeTiles.Any(x => x.Path == walkableTile.Path))
                 {
                     var existingTile = activeTiles.First(x => x.Path == walkableTile.Path);
-
-                    if (!(existingTile.CostDistance > checkTile.CostDistance)) continue;
-
+                    if (!(existingTile.CostDistance > walkableTile.CostDistance)) continue;
                     activeTiles.Remove(existingTile);
                     activeTiles.Add(walkableTile);
                 }
@@ -159,6 +156,7 @@ public class Program
                     //We've never seen this tile before so add it to the list. 
                     activeTiles.Add(walkableTile);
                 }
+            }
         }
 
         return false;
@@ -249,7 +247,7 @@ public class Program
         stage.Clear();
         GC.Collect(a, GCCollectionMode.Forced);
 
-        if (!FindPath(new List<Tile> { currentStage }, goal))
+        if (!FindPath(new List<Tile> { currentStage }, new List<Tile> { currentStage }, goal))
             Console.WriteLine("No Path Found...\n");
     }
 }

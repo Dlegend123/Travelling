@@ -130,6 +130,7 @@ public class Program
                     Console.WriteLine("Path: " + checkTile.Path + ", Score: " + checkTile.Score + Environment.NewLine);
 
                     checkTile = checkTile.Parent;
+
                 } while (checkTile != null);
 
                 return true;

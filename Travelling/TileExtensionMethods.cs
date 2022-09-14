@@ -24,15 +24,15 @@ namespace Travelling
 
         internal static List<Tile> GetWalkableTiles(this Tile currentTile)
         {
-            var possibleTiles = currentTile.Neighbours;
 
-            possibleTiles.ForEach(t1 =>
+            currentTile.Neighbours.ForEach(t =>
             {
-                t1.Parent = currentTile;
-                t1.Cost = currentTile.Cost + 1;
+                t.Parent = currentTile;
+                t.Cost = currentTile.Cost + 1;
+                t.Neighbours.Remove(currentTile);
             });
 
-            return possibleTiles;
+            return currentTile.Neighbours;
         }
 
         internal static Tile MinByDistance(this List<Tile> tiles)

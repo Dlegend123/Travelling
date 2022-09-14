@@ -10,7 +10,7 @@ public class Program
     private static void Main()
     {
         Open();
-       // StoryMode();
+        // StoryMode();
     }
 
     private static void Open()
@@ -100,16 +100,18 @@ public class Program
 
         var currentStage = stage[start.Item1][start.Item2];
         var a = GC.GetGeneration(stage);
+
         stage.Clear();
         GC.Collect(a, GCCollectionMode.Forced);
 
-        if (!FindPath(new List<Tile> { currentStage }, new List<Tile> { currentStage }, goal))
+        if (!FindPath(new List<Tile> { currentStage }, goal))
             Console.WriteLine("No Path Found...\n");
     }
 
-    private static bool FindPath(ICollection<Tile> activeTiles, List<Tile> visitedTiles, (int, int) goal)
+    private static bool FindPath(ICollection<Tile> activeTiles, (int, int) goal)
     {
         var score = 0;
+        List<Tile> visitedTiles = new();
 
         while (activeTiles.Any())
         {
@@ -124,8 +126,8 @@ public class Program
             {
                 //We found the destination and we can be sure (Because the the OrderBy above)
                 //That it's the most low cost option. 
-                Console.WriteLine("Goal: " + goal + ", Start: " + visitedTiles.First().Path);
-                Console.WriteLine("\nRetracing steps backwards...\n");
+                Console.WriteLine("Goal: " + goal + ", Start: " + visitedTiles.First().Path +
+                                  "\n\nRetracing steps backwards...\n");
 
                 do
                 {
@@ -137,11 +139,11 @@ public class Program
 
                 return true;
             }
-            checkTile.Neighbours.Remove(visitedTiles[^2]);
 
             var walkableTiles = checkTile.GetWalkableTiles();
 
-            foreach (var walkableTile in walkableTiles.Where(walkableTile => visitedTiles.All(x => x.Path != walkableTile.Path)))
+            foreach (var walkableTile in walkableTiles.Where(walkableTile =>
+                         visitedTiles.All(x => x.Path != walkableTile.Path)))
             {
                 //It's already in the active list, but that's OK, maybe this new tile has a better value (e.g. We might zigzag earlier but this is now straighter). 
                 if (activeTiles.Any(x => x.Path == walkableTile.Path))
@@ -249,7 +251,7 @@ public class Program
         stage.Clear();
         GC.Collect(a, GCCollectionMode.Forced);
 
-        if (!FindPath(new List<Tile> { currentStage }, new List<Tile> { currentStage }, goal))
+        if (!FindPath(new List<Tile> { currentStage }, goal))
             Console.WriteLine("No Path Found...\n");
     }
 }

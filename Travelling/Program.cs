@@ -141,13 +141,15 @@ public class Program
 
             var walkableTiles = checkTile.GetWalkableTiles();
 
-            foreach (var walkableTile in walkableTiles.Where(walkableTile => !visitedTiles.Any(x => x.Path == walkableTile.Path)))
+            foreach (var walkableTile in walkableTiles.Where(walkableTile => visitedTiles.All(x => x.Path != walkableTile.Path)))
             {
                 //It's already in the active list, but that's OK, maybe this new tile has a better value (e.g. We might zigzag earlier but this is now straighter). 
                 if (activeTiles.Any(x => x.Path == walkableTile.Path))
                 {
                     var existingTile = activeTiles.First(x => x.Path == walkableTile.Path);
+
                     if (!(existingTile.CostDistance > walkableTile.CostDistance)) continue;
+
                     activeTiles.Remove(existingTile);
                     activeTiles.Add(walkableTile);
                 }

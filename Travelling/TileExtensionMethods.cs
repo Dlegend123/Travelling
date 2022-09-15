@@ -24,13 +24,15 @@ namespace Travelling
 
         internal static List<Tile> GetWalkableTiles(this Tile currentTile)
         {
-
-            currentTile.Neighbours.ForEach(t =>
+            var list = currentTile.Neighbours;
+            foreach (var t in list)
             {
                 t.Parent = currentTile;
                 t.Cost = currentTile.Cost + 1;
                 t.Neighbours.Remove(currentTile);
-            });
+                t.Neighbours.RemoveAll(x => x.IsTrap);
+            }
+            currentTile.Neighbours = list;
 
             return currentTile.Neighbours;
         }

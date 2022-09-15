@@ -21,19 +21,25 @@ public class Program
         var stage = new List<List<Tile>>(rows);
         var goal = (random.Next(1, rows - 1), random.Next(1, columns - 1));
         var start = (random.Next(1, rows - 1), random.Next(1, columns - 1));
+        var traps = random.Next(rows);
 
         for (var i = 0; i < rows; i++)
         {
             var list = new List<Tile>(columns);
             var rDif = goal.Item1 - i >= 2 && goal.Item1 - i > i;
+
             for (var j = 0; j < columns; j++)
             {
                 list.Add(new Tile
                 {
                     Path = (i, j),
                     Reward = random.Next(-1, 100),
-                    Distance = (Math.Abs(i - goal.Item1), Math.Abs(j - goal.Item2))
+                    Distance = (Math.Abs(i - goal.Item1), Math.Abs(j - goal.Item2)),
+                    IsTrap =  goal != (i, j) && Convert.ToBoolean(random.Next(2))
                 });
+
+                if (list.Last().IsTrap)
+                    traps--;
 
                 if (!rDif) continue;
 
@@ -104,8 +110,9 @@ public class Program
         stage.Clear();
         GC.Collect(a, GCCollectionMode.Forced);
 
-        if (!FindPath(new List<Tile> { currentStage }, goal))
-            Console.WriteLine("No Path Found...\n");
+        if (FindPath(new List<Tile> { currentStage }, goal)) return;
+        Console.WriteLine("Goal: " + goal + ", Start: " + start +
+                          "\n\nRetracing steps backwards...\nNo Path Found...");
     }
 
     private static bool FindPath(ICollection<Tile> activeTiles, (int, int) goal)
@@ -128,7 +135,6 @@ public class Program
                 //That it's the most low cost option. 
                 Console.WriteLine("Goal: " + goal + ", Start: " + visitedTiles.First().Path +
                                   "\n\nRetracing steps backwards...\n");
-
                 do
                 {
                     Console.WriteLine("Path: " + checkTile.Path + ", Score: " + checkTile.Score + Environment.NewLine);

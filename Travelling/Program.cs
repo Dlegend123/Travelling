@@ -35,7 +35,7 @@ public class Program
                     Path = (i, j),
                     Reward = random.Next(-1, 100),
                     Distance = (Math.Abs(i - goal.Item1), Math.Abs(j - goal.Item2)),
-                    IsTrap =  goal != (i, j) && Convert.ToBoolean(random.Next(2))
+                    IsTrap = traps > 0 && goal != (i, j) && Convert.ToBoolean(random.Next(2))
                 });
 
                 if (list.Last().IsTrap)

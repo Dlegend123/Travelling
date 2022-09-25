@@ -1,5 +1,7 @@
 ﻿#pragma warning disable CS8603 // Possible null reference argument.
 
+using System.Runtime.InteropServices;
+
 namespace Travelling
 {
     internal static class TileExtensionMethods
@@ -24,15 +26,13 @@ namespace Travelling
 
         internal static List<Tile> GetWalkableTiles(this Tile currentTile)
         {
-            var list = currentTile.Neighbours;
-            foreach (var t in list)
+            var tileSpan = CollectionsMarshal.AsSpan(currentTile.Neighbours);
+            foreach (var tile in tileSpan)
             {
-                t.Parent = currentTile;
-                t.Cost = currentTile.Cost + 1;
-                t.Neighbours.Remove(currentTile);
-                t.Neighbours.RemoveAll(x => x.IsTrap);
+                tile.Parent = currentTile;
+                tile.Cost = currentTile.Cost + 1;
+                tile.Neighbours.Remove(currentTile);
             }
-            currentTile.Neighbours = list;
 
             return currentTile.Neighbours;
         }

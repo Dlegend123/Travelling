@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using static System.Formats.Asn1.AsnWriter;
 // ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
@@ -50,13 +51,13 @@ public class Program
             stage.Add(list);
         }
 
-
+        var listSpan = CollectionsMarshal.AsSpan(stage);
         for (var i = 0; i < rows; i++)
         for (var j = 0; j < columns; j++)
         {
-            if (stage[i][j].IsPortal)
+            if (listSpan[i][j].IsPortal)
             {
-                stage[i][j].Score = stage[i][j].Reward = 200;
+                listSpan[i][j].Score = stage[i][j].Reward = 200;
                 var rLeft = random.Next(i, goal.Item1 - i);
                 var cLeft = random.Next(j, goal.Item2 - j);
 
@@ -66,42 +67,42 @@ public class Program
                     cLeft = random.Next(j, goal.Item2 - j);
                 }
 
-                stage[i][j].Neighbours.Add(stage[rLeft][cLeft]);
+                listSpan[i][j].Neighbours.Add(listSpan[rLeft][cLeft]);
             }
 
             if (j > 0)
             {
-                //Left
-                stage[i][j].Neighbours.Add(stage[i][j - 1]);
+                    //Left
+                    listSpan[i][j].Neighbours.Add(listSpan[i][j - 1]);
 
                 if (i + 1 < rows) //Up Left
-                    stage[i][j].Neighbours.Add(stage[i + 1][j - 1]);
+                    listSpan[i][j].Neighbours.Add(listSpan[i + 1][j - 1]);
             }
 
             if (i + 1 < rows)
             {
-                //Up
-                stage[i][j].Neighbours.Add(stage[i + 1][j]);
+                    //Up
+                    listSpan[i][j].Neighbours.Add(listSpan[i + 1][j]);
 
                 if (j + 1 < columns) //Up Right
-                    stage[i][j].Neighbours.Add(stage[i + 1][j + 1]);
+                    listSpan[i][j].Neighbours.Add(listSpan[i + 1][j + 1]);
             }
 
             if (j + 1 < columns)
             {
-                //Right
-                stage[i][j].Neighbours.Add(stage[i][j + 1]);
+                    //Right
+                    listSpan[i][j].Neighbours.Add(listSpan[i][j + 1]);
 
                 if (i - 1 >= 0) //Down Right
-                    stage[i][j].Neighbours.Add(stage[i - 1][j + 1]);
+                    listSpan[i][j].Neighbours.Add(listSpan[i - 1][j + 1]);
             }
 
             if (i - 1 < 0) continue;
-            //Down
-            stage[i][j].Neighbours.Add(stage[i - 1][j]);
+                //Down
+                listSpan[i][j].Neighbours.Add(listSpan[i - 1][j]);
 
             if (j > 0) //Down Left
-                stage[i][j].Neighbours.Add(stage[i - 1][j - 1]);
+                listSpan[i][j].Neighbours.Add(listSpan[i - 1][j - 1]);
         }
 
         var currentStage = stage[start.Item1][start.Item2];
@@ -109,6 +110,7 @@ public class Program
 
         stage.Clear();
         GC.Collect(a, GCCollectionMode.Forced);
+
 
         if (FindPath(new List<Tile> { currentStage }, goal)) return;
         Console.WriteLine("Goal: " + goal + ", Start: " + start +
